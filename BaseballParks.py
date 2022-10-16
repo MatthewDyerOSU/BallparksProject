@@ -1,10 +1,18 @@
 from tkinter import *
 from tkinter import ttk
 
+# Window List
+windowList = []
+
 # Main Window
 mainWindow = Tk()
 mainWindow.title("Ballparks of America")
 mainWindow.configure(bg="black")
+windowList.append(mainWindow)
+
+def reopenLastWindow():
+    windowList[-2].deiconify()
+    windowList.pop().withdraw()
 
 # photos
 titlePhoto = PhotoImage(file="ballparks.png")
@@ -46,12 +54,13 @@ Label(mainWindow, image=titlePhoto, bg="black").grid(row=0, column=0, sticky=W) 
 
 # Entry button function
 def openList():
-    listWindow = Toplevel()
+    listWindow = Toplevel(bg="black")
     listWindow.title("Explore the Parks!")
     listWindow.geometry("1080x800")
     listBackground = Label(listWindow, image=listPhoto)
     listBackground.place(x=0, y=0, relw=1, relh=1)
     mainWindow.withdraw()   #closes main window without closing program
+    windowList.append(listWindow)
 
     # Buttons for all the stadiums (maybe a function can create all of these without writing them all out?)
     americanFamilyFieldButton = Button(listWindow, text="American Family Field", command=openAmericanFamilyField).place(relx=0.5, rely=1/32, anchor=CENTER)
@@ -85,15 +94,20 @@ def openList():
     wrigleyFieldButton = Button(listWindow, text="Wrigley Field", command=openWrigleyField).place(relx=0.5, rely=29/32, anchor=CENTER)
     yankeeStadiumButton = Button(listWindow, text="Yankee Stadium", command=openYankeeStadium).place(relx=0.5, rely=30/32, anchor=CENTER)
 
+# Back button on list screen, goes to main
+    backToMainButton = Button(listWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+
 
 # functions for all the stadium buttons
 def openAmericanFamilyField():
-    americanFamilyFieldWindow = Toplevel(bg="black")
+    americanFamilyFieldWindow = Toplevel()
     americanFamilyFieldWindow.title("American Family Field")
     americanFamilyFieldWindow.geometry("1080x800")
     americanFamilyFieldBackground = Label(americanFamilyFieldWindow, image=americanFamilyFieldPhoto)
     americanFamilyFieldBackground.place(x=0, y=0, relw=1, relh=1)
-    americanFamilyFieldWindow.master.withdraw()
+    windowList[-1].withdraw()
+    windowList.append(americanFamilyFieldWindow)
+    backButton = Button(americanFamilyFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openAngelsStadium():
     angelsStadiumWindow = Toplevel()
@@ -101,6 +115,9 @@ def openAngelsStadium():
     angelsStadiumWindow.geometry("1080x800")
     angelsStadiumBackground = Label(angelsStadiumWindow, image=angelsStadiumPhoto)
     angelsStadiumBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(angelsStadiumWindow)
+    backButton = Button(angelsStadiumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openBuschStadium():
     buschStadiumWindow = Toplevel()
@@ -108,6 +125,9 @@ def openBuschStadium():
     buschStadiumWindow.geometry("1080x800")
     buschStadiumBackground = Label(buschStadiumWindow, image=buschStadiumPhoto)
     buschStadiumBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(buschStadiumWindow)
+    backButton = Button(buschStadiumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openCamdenYards():
     camdenYardsWindow = Toplevel()
@@ -115,6 +135,9 @@ def openCamdenYards():
     camdenYardsWindow.geometry("1080x800")
     camdenYardsBackground = Label(camdenYardsWindow, image=camdenYardsPhoto)
     camdenYardsBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(camdenYardsWindow)
+    backButton = Button(camdenYardsWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openChaseField():
     chaseFieldWindow = Toplevel()
@@ -122,6 +145,9 @@ def openChaseField():
     chaseFieldWindow.geometry("1080x800")
     chaseFieldBackground = Label(chaseFieldWindow, image=chaseFieldPhoto)
     chaseFieldBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(chaseFieldWindow)
+    backButton = Button(chaseFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openCitiField():
     citiFieldWindow = Toplevel()
@@ -129,6 +155,9 @@ def openCitiField():
     citiFieldWindow.geometry("1080x800")
     citiFieldBackground = Label(citiFieldWindow, image=citiFieldPhoto)
     citiFieldBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(citiFieldWindow)
+    backButton = Button(citiFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openCitizensBankPark():
     citizensBankParkWindow = Toplevel()
@@ -136,6 +165,9 @@ def openCitizensBankPark():
     citizensBankParkWindow.geometry("1080x800")
     citizensBankParkBackground = Label(citizensBankParkWindow, image=citizensBankParkPhoto)
     citizensBankParkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(citizensBankParkWindow)
+    backButton = Button(citizensBankParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openComericaPark():
     comericaParkWindow = Toplevel()
@@ -143,6 +175,9 @@ def openComericaPark():
     comericaParkWindow.geometry("1080x800")
     comericaParkBackground = Label(comericaParkWindow, image=comericaParkPhoto)
     comericaParkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(comericaParkWindow)
+    backButton = Button(comericaParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openCoorsField():
     coorsFieldWindow = Toplevel()
@@ -150,6 +185,9 @@ def openCoorsField():
     coorsFieldWindow.geometry("1080x800")
     coorsFieldBackground = Label(coorsFieldWindow, image=coorsFieldPhoto)
     coorsFieldBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(coorsFieldWindow)
+    backButton = Button(coorsFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openDodgersStadium():
     dodgersStadiumWindow = Toplevel()
@@ -157,6 +195,9 @@ def openDodgersStadium():
     dodgersStadiumWindow.geometry("1080x800")
     dodgersStadiumBackground = Label(dodgersStadiumWindow, image=dodgersStadiumPhoto)
     dodgersStadiumBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(dodgersStadiumWindow)
+    backButton = Button(dodgersStadiumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openFenwayPark():
     fenwayParkWindow = Toplevel()
@@ -164,6 +205,9 @@ def openFenwayPark():
     fenwayParkWindow.geometry("1080x800")
     fenwayParkBackground = Label(fenwayParkWindow, image=fenwayParkPhoto)
     fenwayParkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(fenwayParkWindow)
+    backButton = Button(fenwayParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openGlobeLifeField():
     globeLifeFieldWindow = Toplevel()
@@ -171,6 +215,9 @@ def openGlobeLifeField():
     globeLifeFieldWindow.geometry("1080x800")
     globeLifeFieldBackground = Label(globeLifeFieldWindow, image=globeLifeFieldPhoto)
     globeLifeFieldBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(globeLifeFieldWindow)
+    backButton = Button(globeLifeFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openGreatAmericanBallpark():
     greatAmericanBallparkWindow = Toplevel()
@@ -178,6 +225,9 @@ def openGreatAmericanBallpark():
     greatAmericanBallparkWindow.geometry("1080x800")
     greatAmericanBallparkBackground = Label(greatAmericanBallparkWindow, image=greatAmericanBallparkPhoto)
     greatAmericanBallparkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(greatAmericanBallparkWindow)
+    backButton = Button(greatAmericanBallparkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openGuaranteedRateField():
     guaranteedRateFieldWindow = Toplevel()
@@ -185,6 +235,9 @@ def openGuaranteedRateField():
     guaranteedRateFieldWindow.geometry("1080x800")
     guaranteedRateFieldBackground = Label(guaranteedRateFieldWindow, image=guaranteedRateFieldPhoto)
     guaranteedRateFieldBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(guaranteedRateFieldWindow)
+    backButton = Button(guaranteedRateFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openKauffmanStadium():
     kauffmanStadiumWindow = Toplevel()
@@ -192,6 +245,9 @@ def openKauffmanStadium():
     kauffmanStadiumWindow.geometry("1080x800")
     kauffmanStadiumBackground = Label(kauffmanStadiumWindow, image=kauffmanStadiumPhoto)
     kauffmanStadiumBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(kauffmanStadiumWindow)
+    backButton = Button(kauffmanStadiumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openLoanDepotPark():
     loanDepotParkWindow = Toplevel()
@@ -199,6 +255,9 @@ def openLoanDepotPark():
     loanDepotParkWindow.geometry("1080x800")
     loanDepotParkBackground = Label(loanDepotParkWindow, image=loanDepotParkPhoto)
     loanDepotParkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(loanDepotParkWindow)
+    backButton = Button(loanDepotParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openMinuteMaidPark():
     minuteMaidParkWindow = Toplevel()
@@ -206,6 +265,9 @@ def openMinuteMaidPark():
     minuteMaidParkWindow.geometry("1080x800")
     minuteMaidParkBackground = Label(minuteMaidParkWindow, image=minuteMaidParkPhoto)
     minuteMaidParkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(minuteMaidParkWindow)
+    backButton = Button(minuteMaidParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openNationalsPark():
     nationalsParkWindow = Toplevel()
@@ -213,6 +275,9 @@ def openNationalsPark():
     nationalsParkWindow.geometry("1080x800")
     nationalsParkBackground = Label(nationalsParkWindow, image=nationalsParkPhoto)
     nationalsParkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(nationalsParkWindow)
+    backButton = Button(nationalsParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openOraclePark():
     oracleParkWindow = Toplevel()
@@ -220,6 +285,9 @@ def openOraclePark():
     oracleParkWindow.geometry("1080x800")
     oracleParkBackground = Label(oracleParkWindow, image=oracleParkPhoto)
     oracleParkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(oracleParkWindow)
+    backButton = Button(oracleParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openPetcoPark():
     petcoParkWindow = Toplevel()
@@ -227,6 +295,9 @@ def openPetcoPark():
     petcoParkWindow.geometry("1080x800")
     petcoParkBackground = Label(petcoParkWindow, image=petcoParkPhoto)
     petcoParkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(petcoParkWindow)
+    backButton = Button(petcoParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openPncPark():
     pncParkWindow = Toplevel()
@@ -234,6 +305,9 @@ def openPncPark():
     pncParkWindow.geometry("1080x800")
     pncParkBackground = Label(pncParkWindow, image=pncParkPhoto)
     pncParkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(pncParkWindow)
+    backButton = Button(pncParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openProgressiveField():
     progressiveFieldWindow = Toplevel()
@@ -241,6 +315,9 @@ def openProgressiveField():
     progressiveFieldWindow.geometry("1080x800")
     progressiveFieldBackground = Label(progressiveFieldWindow, image=progressiveFieldPhoto)
     progressiveFieldBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(progressiveFieldWindow)
+    backButton = Button(progressiveFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openRingCentralColiseum():
     ringCentralColiseumWindow = Toplevel()
@@ -248,6 +325,9 @@ def openRingCentralColiseum():
     ringCentralColiseumWindow.geometry("1080x800")
     ringCentralColiseumBackground = Label(ringCentralColiseumWindow, image=ringCentralColiseumPhoto)
     ringCentralColiseumBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(ringCentralColiseumWindow)
+    backButton = Button(ringCentralColiseumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openRogersCentre():
     rogersCentreWindow = Toplevel()
@@ -255,6 +335,9 @@ def openRogersCentre():
     rogersCentreWindow.geometry("1080x800")
     rogersCentreBackground = Label(rogersCentreWindow, image=rogersCentrePhoto)
     rogersCentreBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(rogersCentreWindow)
+    backButton = Button(rogersCentreWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openTmobilePark():
     tmobileParkWindow = Toplevel()
@@ -262,6 +345,9 @@ def openTmobilePark():
     tmobileParkWindow.geometry("1080x800")
     tmobileParkBackground = Label(tmobileParkWindow, image=tmobileParkPhoto)
     tmobileParkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(tmobileParkWindow)
+    backButton = Button(tmobileParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openTargetField():
     targetFieldWindow = Toplevel()
@@ -269,6 +355,9 @@ def openTargetField():
     targetFieldWindow.geometry("1080x800")
     targetFieldBackground = Label(targetFieldWindow, image=targetFieldPhoto)
     targetFieldBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(targetFieldWindow)
+    backButton = Button(targetFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openTropicanaField():
     tropicanaFieldWindow = Toplevel()
@@ -276,6 +365,9 @@ def openTropicanaField():
     tropicanaFieldWindow.geometry("1080x800")
     tropicanaFieldBackground = Label(tropicanaFieldWindow, image=tropicanaFieldPhoto)
     tropicanaFieldBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(tropicanaFieldWindow)
+    backButton = Button(tropicanaFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openTruistPark():
     truistParkWindow = Toplevel()
@@ -283,6 +375,9 @@ def openTruistPark():
     truistParkWindow.geometry("1080x800")
     truistParkBackground = Label(truistParkWindow, image=truistParkPhoto)
     truistParkBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(truistParkWindow)
+    backButton = Button(truistParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openWrigleyField():
     wrigleyFieldWindow = Toplevel()
@@ -290,6 +385,9 @@ def openWrigleyField():
     wrigleyFieldWindow.geometry("1080x800")
     wrigleyFieldBackground = Label(wrigleyFieldWindow, image=wrigleyFieldPhoto)
     wrigleyFieldBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(wrigleyFieldWindow)
+    backButton = Button(wrigleyFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openYankeeStadium():
     yankeeStadiumWindow = Toplevel()
@@ -297,12 +395,10 @@ def openYankeeStadium():
     yankeeStadiumWindow.geometry("1080x800")
     yankeeStadiumBackground = Label(yankeeStadiumWindow, image=yankeeStadiumPhoto)
     yankeeStadiumBackground.place(x=0, y=0, relw=1, relh=1)
+    windowList[-1].withdraw()
+    windowList.append(yankeeStadiumWindow)
+    backButton = Button(yankeeStadiumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
 
-def backToMain(): # back button to main screen
-    pass
-
-def backToList(): # back button to list screen
-    pass
 
 # create entry button
 entryButton = Button(mainWindow, text="Explore the Parks!", padx=100, pady=80, command=openList).place(relx=0.5, rely=0.5, anchor=CENTER)
