@@ -1,7 +1,13 @@
-from tkinter import *
-from tkinter import ttk
+# Non-functional Requirements:
+    # Usability: The software should be pleasant and easy to use to inspire users to continue to use it as a source of MLB ballpark information
+    # Reliability: It is important for the functions of this software to work reliably so that users develop trust in the product.
+    # Memorability: Users should be able to navigate and use the application without having to revisit the documentation
 
-# Window List
+from tkinter import *
+from tkinter import Tk, Text
+from re import sub
+
+# Window List as a stack for managing backtracking
 windowList = []
 
 # Main Window
@@ -9,6 +15,7 @@ mainWindow = Tk()
 mainWindow.title("Ballparks of America")
 mainWindow.configure(bg="black")
 windowList.append(mainWindow)
+mainHelpText = Text(mainWindow, height=30, width=100)
 
 def reopenLastWindow():
     windowList[-2].deiconify()
@@ -61,42 +68,50 @@ def openList():
     listBackground.place(x=0, y=0, relw=1, relh=1)
     mainWindow.withdraw()   #closes main window without closing program
     windowList.append(listWindow)
+    helpButton = Button(listWindow, text="Click Here for HELP", command=openHelpWindow, cursor="question_arrow").place(relx=0.9, rely=0.1, anchor=CENTER)
+    searchButton = Button(listWindow, text="Search!", padx=50, pady=30, command=openSearchWindow, cursor="target").place(relx=0.1, rely=0.8, anchor=CENTER)
 
     # Buttons for all the stadiums (maybe a function can create all of these without writing them all out?)
-    americanFamilyFieldButton = Button(listWindow, text="American Family Field", command=openAmericanFamilyField).place(relx=0.5, rely=1/32, anchor=CENTER)
-    angelsStadiumButton = Button(listWindow, text="Angel Stadium", command=openAngelsStadium).place(relx=0.5, rely=2/32, anchor=CENTER)
-    buschStadiumButton = Button(listWindow, text="Busch Stadium", command=openBuschStadium).place(relx=0.5, rely=3/32, anchor=CENTER)
-    camdenYardsButton = Button(listWindow, text="Camden Yards", command=openCamdenYards).place(relx=0.5, rely=4/32, anchor=CENTER)
-    chaseFieldButton = Button(listWindow, text="Chase Field", command=openChaseField).place(relx=0.5, rely=5/32, anchor=CENTER)
-    citiFieldButton = Button(listWindow, text="Citi Field", command=openCitiField).place(relx=0.5, rely=6/32, anchor=CENTER)
-    citizensBankParkButton = Button(listWindow, text="Citizens Bank Park", command=openCitizensBankPark).place(relx=0.5, rely=7/32, anchor=CENTER)
-    comericaParkButton = Button(listWindow, text="Comerica Park", command=openComericaPark).place(relx=0.5, rely=8/32, anchor=CENTER)
-    coorsFieldButton = Button(listWindow, text="Coors Field", command=openCoorsField).place(relx=0.5, rely=9/32, anchor=CENTER)
-    dodgersStadiumButton = Button(listWindow, text="Dodger Stadium", command=openDodgersStadium).place(relx=0.5, rely=10/32, anchor=CENTER)
-    fenwayParkButton = Button(listWindow, text="Fenway Park", command=openFenwayPark).place(relx=0.5, rely=11/32, anchor=CENTER)
-    globeLifeFieldButton = Button(listWindow, text="Globe Life Field", command=openGlobeLifeField).place(relx=0.5, rely=12/32, anchor=CENTER)
-    greatAmericanBallparkButton = Button(listWindow, text="Great America Ballpark", command=openGreatAmericanBallpark).place(relx=0.5, rely=13/32, anchor=CENTER)
-    guaranteedRateFieldButton = Button(listWindow, text="Guaranteed Rate Field", command=openGuaranteedRateField).place(relx=0.5, rely=14/32, anchor=CENTER)
-    kauffmanStadiumButton = Button(listWindow, text="Kaufmann Stadium", command=openKauffmanStadium).place(relx=0.5, rely=15/32, anchor=CENTER)
-    loanDepotParkButton = Button(listWindow, text="Loan Depot Park", command=openLoanDepotPark).place(relx=0.5, rely=16/32, anchor=CENTER)
-    minuteMaidParkButton = Button(listWindow, text="Minute Maid Park", command=openMinuteMaidPark).place(relx=0.5, rely=17/32, anchor=CENTER)
-    nationalsParkButton = Button(listWindow, text="Nationals Park", command=openNationalsPark).place(relx=0.5, rely=18/32, anchor=CENTER)
-    oracleParkButton = Button(listWindow, text="Oracle Park", command=openOraclePark).place(relx=0.5, rely=19/32, anchor=CENTER)
-    petcoParkButton = Button(listWindow, text="Petco Park", command=openPetcoPark).place(relx=0.5, rely=20/32, anchor=CENTER)
-    pncParkButton = Button(listWindow, text="PNC Park", command=openPncPark).place(relx=0.5, rely=21/32, anchor=CENTER)
-    progressiveFieldButton = Button(listWindow, text="Progressive Field", command=openProgressiveField).place(relx=0.5, rely=22/32, anchor=CENTER)
-    ringCentralColiseum = Button(listWindow, text="RingCentral Coliseum", command=openRingCentralColiseum).place(relx=0.5, rely=23/32, anchor=CENTER)
-    rogersCentreButton = Button(listWindow, text="Rogers Centre", command=openRogersCentre).place(relx=0.5, rely=24/32, anchor=CENTER)
-    tmobileParkButton = Button(listWindow, text="T-Mobile Park", command=openTmobilePark).place(relx=0.5, rely=25/32, anchor=CENTER)
-    targetFieldButton = Button(listWindow, text="Target Field", command=openTargetField).place(relx=0.5, rely=26/32, anchor=CENTER)
-    tropicanaFieldButton = Button(listWindow, text="Tropicana Field", command=openTropicanaField).place(relx=0.5, rely=27/32, anchor=CENTER)
-    truistParkButton = Button(listWindow, text="Truist Park", command=openTruistPark).place(relx=0.5, rely=28/32, anchor=CENTER)
-    wrigleyFieldButton = Button(listWindow, text="Wrigley Field", command=openWrigleyField).place(relx=0.5, rely=29/32, anchor=CENTER)
-    yankeeStadiumButton = Button(listWindow, text="Yankee Stadium", command=openYankeeStadium).place(relx=0.5, rely=30/32, anchor=CENTER)
+    americanFamilyFieldButton = Button(listWindow, text="American Family Field", command=openAmericanFamilyField, cursor="target").place(relx=0.5, rely=1/32, anchor=CENTER)
+    angelsStadiumButton = Button(listWindow, text="Angel Stadium", command=openAngelsStadium, cursor="target").place(relx=0.5, rely=2/32, anchor=CENTER)
+    buschStadiumButton = Button(listWindow, text="Busch Stadium", command=openBuschStadium, cursor="target").place(relx=0.5, rely=3/32, anchor=CENTER)
+    camdenYardsButton = Button(listWindow, text="Camden Yards", command=openCamdenYards, cursor="target").place(relx=0.5, rely=4/32, anchor=CENTER)
+    chaseFieldButton = Button(listWindow, text="Chase Field", command=openChaseField, cursor="target").place(relx=0.5, rely=5/32, anchor=CENTER)
+    citiFieldButton = Button(listWindow, text="Citi Field", command=openCitiField, cursor="target").place(relx=0.5, rely=6/32, anchor=CENTER)
+    citizensBankParkButton = Button(listWindow, text="Citizens Bank Park", command=openCitizensBankPark, cursor="target").place(relx=0.5, rely=7/32, anchor=CENTER)
+    comericaParkButton = Button(listWindow, text="Comerica Park", command=openComericaPark, cursor="target").place(relx=0.5, rely=8/32, anchor=CENTER)
+    coorsFieldButton = Button(listWindow, text="Coors Field", command=openCoorsField, cursor="target").place(relx=0.5, rely=9/32, anchor=CENTER)
+    dodgersStadiumButton = Button(listWindow, text="Dodger Stadium", command=openDodgersStadium, cursor="target").place(relx=0.5, rely=10/32, anchor=CENTER)
+    fenwayParkButton = Button(listWindow, text="Fenway Park", command=openFenwayPark, cursor="target").place(relx=0.5, rely=11/32, anchor=CENTER)
+    globeLifeFieldButton = Button(listWindow, text="Globe Life Field", command=openGlobeLifeField, cursor="target").place(relx=0.5, rely=12/32, anchor=CENTER)
+    greatAmericanBallparkButton = Button(listWindow, text="Great America Ballpark", command=openGreatAmericanBallpark, cursor="target").place(relx=0.5, rely=13/32, anchor=CENTER)
+    guaranteedRateFieldButton = Button(listWindow, text="Guaranteed Rate Field", command=openGuaranteedRateField, cursor="target").place(relx=0.5, rely=14/32, anchor=CENTER)
+    kauffmanStadiumButton = Button(listWindow, text="Kaufmann Stadium", command=openKauffmanStadium, cursor="target").place(relx=0.5, rely=15/32, anchor=CENTER)
+    loanDepotParkButton = Button(listWindow, text="Loan Depot Park", command=openloanDepotPark, cursor="target").place(relx=0.5, rely=16/32, anchor=CENTER)
+    minuteMaidParkButton = Button(listWindow, text="Minute Maid Park", command=openMinuteMaidPark, cursor="target").place(relx=0.5, rely=17/32, anchor=CENTER)
+    nationalsParkButton = Button(listWindow, text="Nationals Park", command=openNationalsPark, cursor="target").place(relx=0.5, rely=18/32, anchor=CENTER)
+    oracleParkButton = Button(listWindow, text="Oracle Park", command=openOraclePark, cursor="target").place(relx=0.5, rely=19/32, anchor=CENTER)
+    petcoParkButton = Button(listWindow, text="Petco Park", command=openPetcoPark, cursor="target").place(relx=0.5, rely=20/32, anchor=CENTER)
+    pncParkButton = Button(listWindow, text="PNC Park", command=openPncPark, cursor="target").place(relx=0.5, rely=21/32, anchor=CENTER)
+    progressiveFieldButton = Button(listWindow, text="Progressive Field", command=openProgressiveField, cursor="target").place(relx=0.5, rely=22/32, anchor=CENTER)
+    ringCentralColiseum = Button(listWindow, text="RingCentral Coliseum", command=openRingCentralColiseum, cursor="target").place(relx=0.5, rely=23/32, anchor=CENTER)
+    rogersCentreButton = Button(listWindow, text="Rogers Centre", command=openRogersCentre, cursor="target").place(relx=0.5, rely=24/32, anchor=CENTER)
+    tmobileParkButton = Button(listWindow, text="T-Mobile Park", command=openTMobilePark, cursor="target").place(relx=0.5, rely=25/32, anchor=CENTER)
+    targetFieldButton = Button(listWindow, text="Target Field", command=openTargetField, cursor="target").place(relx=0.5, rely=26/32, anchor=CENTER)
+    tropicanaFieldButton = Button(listWindow, text="Tropicana Field", command=openTropicanaField, cursor="target").place(relx=0.5, rely=27/32, anchor=CENTER)
+    truistParkButton = Button(listWindow, text="Truist Park", command=openTruistPark, cursor="target").place(relx=0.5, rely=28/32, anchor=CENTER)
+    wrigleyFieldButton = Button(listWindow, text="Wrigley Field", command=openWrigleyField, cursor="target").place(relx=0.5, rely=29/32, anchor=CENTER)
+    yankeeStadiumButton = Button(listWindow, text="Yankee Stadium", command=openYankeeStadium, cursor="target").place(relx=0.5, rely=30/32, anchor=CENTER)
 
 # Back button on list screen, goes to main
-    backToMainButton = Button(listWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backToMainButton = Button(listWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)\
 
+def openHelpWindow():
+    helpWindow = Toplevel()
+    helpWindow.title("HELP")
+    helpWindow.geometry("300x70")
+    helpText = Label(helpWindow, text="Click 'Explore the Parks!' to see a list of MLB ballparks\n Click on the name of a ballpark to go it's page\n Click on 'Search!' to search for a ballpark\nClick on back to go back!")
+    helpText.pack()
 
 # functions for all the stadium buttons
 def openAmericanFamilyField():
@@ -107,7 +122,7 @@ def openAmericanFamilyField():
     americanFamilyFieldBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(americanFamilyFieldWindow)
-    backButton = Button(americanFamilyFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(americanFamilyFieldWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openAngelsStadium():
     angelsStadiumWindow = Toplevel()
@@ -117,7 +132,7 @@ def openAngelsStadium():
     angelsStadiumBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(angelsStadiumWindow)
-    backButton = Button(angelsStadiumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(angelsStadiumWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openBuschStadium():
     buschStadiumWindow = Toplevel()
@@ -127,7 +142,7 @@ def openBuschStadium():
     buschStadiumBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(buschStadiumWindow)
-    backButton = Button(buschStadiumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(buschStadiumWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openCamdenYards():
     camdenYardsWindow = Toplevel()
@@ -137,7 +152,7 @@ def openCamdenYards():
     camdenYardsBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(camdenYardsWindow)
-    backButton = Button(camdenYardsWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(camdenYardsWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openChaseField():
     chaseFieldWindow = Toplevel()
@@ -147,7 +162,7 @@ def openChaseField():
     chaseFieldBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(chaseFieldWindow)
-    backButton = Button(chaseFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(chaseFieldWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openCitiField():
     citiFieldWindow = Toplevel()
@@ -157,7 +172,7 @@ def openCitiField():
     citiFieldBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(citiFieldWindow)
-    backButton = Button(citiFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(citiFieldWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openCitizensBankPark():
     citizensBankParkWindow = Toplevel()
@@ -167,7 +182,7 @@ def openCitizensBankPark():
     citizensBankParkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(citizensBankParkWindow)
-    backButton = Button(citizensBankParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(citizensBankParkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openComericaPark():
     comericaParkWindow = Toplevel()
@@ -177,7 +192,7 @@ def openComericaPark():
     comericaParkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(comericaParkWindow)
-    backButton = Button(comericaParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(comericaParkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openCoorsField():
     coorsFieldWindow = Toplevel()
@@ -187,7 +202,7 @@ def openCoorsField():
     coorsFieldBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(coorsFieldWindow)
-    backButton = Button(coorsFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(coorsFieldWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openDodgersStadium():
     dodgersStadiumWindow = Toplevel()
@@ -197,7 +212,7 @@ def openDodgersStadium():
     dodgersStadiumBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(dodgersStadiumWindow)
-    backButton = Button(dodgersStadiumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(dodgersStadiumWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openFenwayPark():
     fenwayParkWindow = Toplevel()
@@ -207,7 +222,7 @@ def openFenwayPark():
     fenwayParkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(fenwayParkWindow)
-    backButton = Button(fenwayParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(fenwayParkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openGlobeLifeField():
     globeLifeFieldWindow = Toplevel()
@@ -217,7 +232,7 @@ def openGlobeLifeField():
     globeLifeFieldBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(globeLifeFieldWindow)
-    backButton = Button(globeLifeFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(globeLifeFieldWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openGreatAmericanBallpark():
     greatAmericanBallparkWindow = Toplevel()
@@ -227,7 +242,7 @@ def openGreatAmericanBallpark():
     greatAmericanBallparkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(greatAmericanBallparkWindow)
-    backButton = Button(greatAmericanBallparkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(greatAmericanBallparkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openGuaranteedRateField():
     guaranteedRateFieldWindow = Toplevel()
@@ -237,7 +252,7 @@ def openGuaranteedRateField():
     guaranteedRateFieldBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(guaranteedRateFieldWindow)
-    backButton = Button(guaranteedRateFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(guaranteedRateFieldWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openKauffmanStadium():
     kauffmanStadiumWindow = Toplevel()
@@ -247,9 +262,9 @@ def openKauffmanStadium():
     kauffmanStadiumBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(kauffmanStadiumWindow)
-    backButton = Button(kauffmanStadiumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(kauffmanStadiumWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
-def openLoanDepotPark():
+def openloanDepotPark():
     loanDepotParkWindow = Toplevel()
     loanDepotParkWindow.title("loanDepot Park")
     loanDepotParkWindow.geometry("1080x800")
@@ -257,7 +272,7 @@ def openLoanDepotPark():
     loanDepotParkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(loanDepotParkWindow)
-    backButton = Button(loanDepotParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(loanDepotParkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openMinuteMaidPark():
     minuteMaidParkWindow = Toplevel()
@@ -267,7 +282,7 @@ def openMinuteMaidPark():
     minuteMaidParkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(minuteMaidParkWindow)
-    backButton = Button(minuteMaidParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(minuteMaidParkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openNationalsPark():
     nationalsParkWindow = Toplevel()
@@ -277,7 +292,7 @@ def openNationalsPark():
     nationalsParkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(nationalsParkWindow)
-    backButton = Button(nationalsParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(nationalsParkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openOraclePark():
     oracleParkWindow = Toplevel()
@@ -287,7 +302,7 @@ def openOraclePark():
     oracleParkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(oracleParkWindow)
-    backButton = Button(oracleParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(oracleParkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openPetcoPark():
     petcoParkWindow = Toplevel()
@@ -297,7 +312,7 @@ def openPetcoPark():
     petcoParkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(petcoParkWindow)
-    backButton = Button(petcoParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(petcoParkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openPncPark():
     pncParkWindow = Toplevel()
@@ -307,7 +322,7 @@ def openPncPark():
     pncParkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(pncParkWindow)
-    backButton = Button(pncParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(pncParkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openProgressiveField():
     progressiveFieldWindow = Toplevel()
@@ -317,7 +332,7 @@ def openProgressiveField():
     progressiveFieldBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(progressiveFieldWindow)
-    backButton = Button(progressiveFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(progressiveFieldWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openRingCentralColiseum():
     ringCentralColiseumWindow = Toplevel()
@@ -327,7 +342,7 @@ def openRingCentralColiseum():
     ringCentralColiseumBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(ringCentralColiseumWindow)
-    backButton = Button(ringCentralColiseumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(ringCentralColiseumWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openRogersCentre():
     rogersCentreWindow = Toplevel()
@@ -337,9 +352,9 @@ def openRogersCentre():
     rogersCentreBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(rogersCentreWindow)
-    backButton = Button(rogersCentreWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(rogersCentreWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
-def openTmobilePark():
+def openTMobilePark():
     tmobileParkWindow = Toplevel()
     tmobileParkWindow.title("T-Mobile Park")
     tmobileParkWindow.geometry("1080x800")
@@ -347,7 +362,7 @@ def openTmobilePark():
     tmobileParkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(tmobileParkWindow)
-    backButton = Button(tmobileParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(tmobileParkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openTargetField():
     targetFieldWindow = Toplevel()
@@ -357,7 +372,7 @@ def openTargetField():
     targetFieldBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(targetFieldWindow)
-    backButton = Button(targetFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(targetFieldWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openTropicanaField():
     tropicanaFieldWindow = Toplevel()
@@ -367,7 +382,7 @@ def openTropicanaField():
     tropicanaFieldBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(tropicanaFieldWindow)
-    backButton = Button(tropicanaFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(tropicanaFieldWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openTruistPark():
     truistParkWindow = Toplevel()
@@ -377,7 +392,7 @@ def openTruistPark():
     truistParkBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(truistParkWindow)
-    backButton = Button(truistParkWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(truistParkWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openWrigleyField():
     wrigleyFieldWindow = Toplevel()
@@ -387,7 +402,7 @@ def openWrigleyField():
     wrigleyFieldBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(wrigleyFieldWindow)
-    backButton = Button(wrigleyFieldWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(wrigleyFieldWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
 def openYankeeStadium():
     yankeeStadiumWindow = Toplevel()
@@ -397,11 +412,53 @@ def openYankeeStadium():
     yankeeStadiumBackground.place(x=0, y=0, relw=1, relh=1)
     windowList[-1].withdraw()
     windowList.append(yankeeStadiumWindow)
-    backButton = Button(yankeeStadiumWindow, text="Back", command=reopenLastWindow).place(relx=0.1, rely=0.1, anchor=CENTER)
+    backButton = Button(yankeeStadiumWindow, text="Back", command=reopenLastWindow, cursor="sb_left_arrow").place(relx=0.1, rely=0.1, anchor=CENTER)
 
+def openSearchWindow():
+    searchWindow = Toplevel()
+    searchWindow.title("Search!")
+    searchWindow.geometry("500x300")
+    # Update the list window
+    def update(data):
+        searchList.delete(0, END)
+        for item in data:
+            searchList.insert(END, item)
+    # Checks entry against the list
+    def check(event):
+        entry = searchEntry.get()   # Grab what was typed
+        if entry == '':
+            data = stadiumList
+        else:
+            data = []
+            for item in stadiumList:
+                if entry.lower() in item.lower():
+                    data.append(item)
+        update(data)
+    # Retrieves the stadium window that matches the listbox selection
+    def getWindow(event):
+        # selection = "open" + stadiumList.get(ACTIVE).replace(" ", "")
+        selection = sub(r"-", " ", searchList.get(ANCHOR))
+        windowString = "open" + selection.replace(" ", "")
+        return globals()[windowString]() and searchWindow.destroy()
+        
+    searchLabel = Label(searchWindow, text="Enter name to search!", font=("Helvetica",14), fg="grey")
+    searchLabel.pack(pady=20)
+    searchEntry = Entry(searchWindow, font=("Helvetica", 20))
+    searchEntry.pack()
+    searchList = Listbox(searchWindow, width=50)
+    searchList.pack(pady=40)
+    stadiumList = ["American Family Field", "Angel Stadium", "Busch Stadium", "Camden Yards", "Chase Field", "Citi Field", "Citizens Bank Park", "Comerica Park", "Coors Field", 
+                "Dodger Stadium", "Fenway Park", "Globe Life Field", "Great American Ballpark", "Guaranteed Rate Field", "Kauffman Stadium", "loanDepot Park", 
+                "Minute Maid Park", "Nationals Park", "Oracle Park", "Petco Park", "PNC Park", "Progressive Field", "RingCentral Coliseum", "Rogers Centre",
+                "T-Mobile Park", "Target Field", "Tropicana Field", "Truist Park", "Wrigley Field", "Yankee Stadium"]
+    update(stadiumList)
+    searchList.bind("<<ListboxSelect>>", getWindow)
+    searchEntry.bind("<KeyRelease>", check)
 
 # create entry button
-entryButton = Button(mainWindow, text="Explore the Parks!", padx=100, pady=80, command=openList).place(relx=0.5, rely=0.5, anchor=CENTER)
+entryButton = Button(mainWindow, text="Explore the Parks!", padx=100, pady=80, command=openList, cursor="target").place(relx=0.5, rely=0.5, anchor=CENTER)
+
+helpButton = Button(mainWindow, text="Click Here for HELP", command=openHelpWindow, cursor="question_arrow").place(relx=0.9, rely=0.1, anchor=CENTER)
 
 # run main loop
 mainWindow.mainloop()
